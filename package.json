@@ -1,6 +1,6 @@
 {
   "name": "git-hour",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Briefly shows how much hours each contributor spent on a git repository",
   "keywords": [
     "git",
