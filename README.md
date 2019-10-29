@@ -31,7 +31,7 @@ git-hour ~/workspace/github.com/beenotung/tslib
 ```
 
 ## Todo
-- [ ] Allow custom duration of `maximum interval between commits in a session` and `minimum duration before initial commit in the session`
+- [ ] Allow cli to customize duration of `maximum interval between commits in a session` and `minimum duration before initial commit in the session`
 - [ ] Use average interval in each session to adjust initial commit
 
 ## Similar works
