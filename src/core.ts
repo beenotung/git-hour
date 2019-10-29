@@ -1,8 +1,6 @@
-import { spawn } from '@beenotung/tslib/child_process';
-import { catchMain } from '@beenotung/tslib/node';
 import { binArrayBy } from '@beenotung/tslib/array';
-import { MINUTE, HOUR } from '@beenotung/tslib/time';
-import { format_time_duration } from '@beenotung/tslib/format';
+import { spawn } from '@beenotung/tslib/child_process';
+import { MINUTE } from '@beenotung/tslib/time';
 
 enum state {
   wait_commit,
@@ -11,22 +9,19 @@ enum state {
 }
 
 const defaultState = state.wait_commit;
+
 type Commit = {
-  Author: string
-  Date: number
-}
-type Session = {
-  LastTime: number
-  Duration: number
-  CommitCount: number
-}
+  Author: string;
+  Date: number;
+};
+
 export let config = {
   maxSessionDiff: 60 * MINUTE,
   minFirstSessionDuration: 5 * MINUTE,
 };
 
 export async function scanDir(options: { dir: string }) {
-  let { dir } = options;
+  const { dir } = options;
   let currentState = defaultState;
 
   function defaultOnline(line: string) {
@@ -34,7 +29,7 @@ export async function scanDir(options: { dir: string }) {
     online(line);
   }
 
-  let commits: Commit[] = [];
+  const commits: Commit[] = [];
   let commit: Commit;
 
   function online(line: string): void {
@@ -68,15 +63,22 @@ export async function scanDir(options: { dir: string }) {
 
   function onend() {
     const { maxSessionDiff, minFirstSessionDuration } = config;
-    return Array.from(binArrayBy(commits, commit => commit.Author).entries())
-      .map(([Author, commits]) => {
-        let times = commits.map(commit => commit.Date)
-          .sort((a, b) => a - b);
-        let { AccDuration, AccCount, TotalDuration } = times.reduce(({ LastTime, AccDuration, AccCount, TotalDuration }, c) => {
-          let diff = c - LastTime;
+    return Array.from(
+      binArrayBy(commits, commit => commit.Author).entries(),
+    ).map(([Author, commits]) => {
+      const times = commits.map(commit => commit.Date).sort((a, b) => a - b);
+      const { AccDuration, AccCount, TotalDuration } = times.reduce(
+        ({ LastTime, AccDuration, AccCount, TotalDuration }, c) => {
+          const diff = c - LastTime;
           if (diff > maxSessionDiff) {
             // new session
             TotalDuration += AccDuration + minFirstSessionDuration;
+            if (AccCount < 1) {
+              TotalDuration += minFirstSessionDuration;
+            } else {
+              const avgDuration = AccDuration / AccCount;
+              TotalDuration += Math.max(minFirstSessionDuration, avgDuration);
+            }
             AccCount = 0;
             AccDuration = 0;
           } else {
@@ -86,11 +88,19 @@ export async function scanDir(options: { dir: string }) {
           }
           LastTime = c;
           return { LastTime, AccDuration, AccCount, TotalDuration };
-        }, { LastTime: 0, AccDuration: 0, AccCount: 0, TotalDuration: 0 });
-        TotalDuration += AccDuration;
-        return [Author, TotalDuration] as [string, number];
-      })
-      ;
+        },
+        { LastTime: 0, AccDuration: 0, AccCount: 0, TotalDuration: 0 },
+      );
+      let Duration: number;
+      if (AccCount < 1) {
+        Duration = TotalDuration + minFirstSessionDuration;
+      } else {
+        const avgDuration = AccDuration / AccCount;
+        Duration =
+          TotalDuration + Math.max(minFirstSessionDuration, avgDuration);
+      }
+      return [Author, Duration] as [string, number];
+    });
   }
 
   return spawn({
@@ -98,7 +108,10 @@ export async function scanDir(options: { dir: string }) {
     args: ['log', '--all', '--full-history'],
     options: { cwd: dir },
     on_stdout: chunk => {
-      chunk.toString().split('\n').forEach((line: string) => online(line));
+      chunk
+        .toString()
+        .split('\n')
+        .forEach((line: string) => online(line));
     },
     on_stderr: chunk => {
       console.error(chunk);
