@@ -48,5 +48,13 @@
     "tslint-config-prettier": "^1.18.0",
     "tslint-eslint-rules": "^5.4.0",
     "typescript": "^3.6.4"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/beenotung/git-hour.git"
+  },
+  "bugs": {
+    "url": "https://github.com/beenotung/git-hour/issues"
+  },
+  "homepage": "https://github.com/beenotung/git-hour#readme"
 }
