@@ -95,7 +95,7 @@ export async function scanDir(options: { dir: string }) {
 
   return spawn({
     cmd: 'git',
-    args: ['log'],
+    args: ['log', '--all', '--full-history'],
     options: { cwd: dir },
     on_stdout: chunk => {
       chunk.toString().split('\n').forEach((line: string) => online(line));
