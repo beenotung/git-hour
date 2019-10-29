@@ -30,6 +30,10 @@ git-hour
 git-hour ~/workspace/github.com/beenotung/tslib
 ```
 
+## Todo
+- [ ] Allow custom duration of `maximum interval between commits in a session` and `minimum duration before initial commit in the session`
+- [ ] Use average interval in each session to adjust initial commit
+
 ## Similar works
 - [git-time](https://github.com/vmf91/git-time) does not distinct each contributor
 - [git-times](https://github.com/kimmobrunfeldt/git-hours) does not work with npx (probably due to dependency on the tricky nodegit)
