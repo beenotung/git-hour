@@ -37,5 +37,5 @@ git-hour ~/workspace/github.com/beenotung/tslib
 
 ## Similar works
 - [git-time](https://github.com/vmf91/git-time) does not distinct each contributor
-- [git-hours](https://github.com/kimmobrunfeldt/git-hours) does not work with npx (probably due to dependency on the tricky nodegit)
+- [git-hours](https://github.com/kimmobrunfeldt/git-hours) ~~does not work with npx~~ (fixed in `1.5.0`) depends on the tricky nodegit
 
