@@ -14,14 +14,12 @@
     "git-hour": "git-hour"
   },
   "scripts": {
-    "test": "npm run rawtest",
-    "clean": "rimraf node_modules/@beenotung/tslib/index.* dist",
+    "clean": "rimraf dist",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "prebuild": "npm run clean",
-    "build": "tsc",
-    "pretest": "npm run format && npm run build",
-    "rawtest": "ts-node test/index.ts",
-    "prepublishOnly": "npm run rawtest && npm run build"
+    "build": "npm run clean && npm run tsc",
+    "tsc": "tsc",
+    "test": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
   },
   "directories": {
     "test": "test"
